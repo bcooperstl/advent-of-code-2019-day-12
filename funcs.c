@@ -31,6 +31,26 @@ void apply_gravity()
     }
 }
 
+void apply_gravity_dim(int dim)
+{
+    for (int j=0; j<MOON_COUNT; j++)
+    {
+        for (int k=j+1; k<MOON_COUNT; k++)
+        {
+            if (position[dim][j] < position[dim][k])
+            {
+                velocity[dim][j]++;
+                velocity[dim][k]--;
+            }
+            else if (position[dim][j] > position[dim][k])
+            {
+                velocity[dim][j]--;
+                velocity[dim][k]++;
+            }
+        }
+    }
+}
+
 void apply_velocity()
 {
     for (int i=0; i<DIM_COUNT; i++) // loop for x, y, z
@@ -40,6 +60,46 @@ void apply_velocity()
             position[i][j]+=velocity[i][j];
         }
     }    
+}
+
+void apply_velocity_dim(int dim)
+{
+    for (int j=0; j<MOON_COUNT; j++)
+    {
+        position[dim][j]+=velocity[dim][j];
+    }
+}
+
+int matches(int dim, int * start_position, int * start_velocity)
+{
+    for (int i=0; i<MOON_COUNT; i++)
+    {
+        if (start_position[i]!=position[dim][i])
+            return 0;
+        if (start_velocity[i]!=velocity[dim][i])
+            return 0;
+    }
+    return 1;
+}
+
+int steps_to_repeat(int dim)
+{
+    int count=0;
+    int start_position[MOON_COUNT];
+    int start_velocity[MOON_COUNT];
+    for (int i=0; i<MOON_COUNT; i++)
+    {
+        start_position[i]=position[dim][i];
+        start_velocity[i]=velocity[dim][i];
+    }
+    do
+    {
+        count++;
+        apply_gravity_dim(dim);
+        apply_velocity_dim(dim);
+    } while (!matches(dim, start_position, start_velocity));
+    printf("Dimension %d repeats in %d steps\n", dim, count);
+    return count;
 }
 
 int calculate_total_energy()

@@ -12,5 +12,8 @@ void apply_velocity();
 int calculate_total_energy();
 void dump(int step_number);
 void run_steps(int num_steps);
+void apply_gravity_dim(int dim);
+void apply_velocity_dim(int dim);
+int steps_to_repeat(int dim);
 
 #endif
